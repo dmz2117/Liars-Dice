@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- CSS STYLES -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href='https://fonts.googleapis.com/css?family=Bungee Shade' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css?family=Monoton' rel='stylesheet'>
+  <link rel="stylesheet" href="styles/style.css">
+
+  <title>Liar's Dice Online</title>
+</head>
+
+<body>
+  <div id="app">
+    <div class="display center">
+
+      <!-- Start Screen -->
+      <div v-if="screen == 'start'" class="center">
+        <div class="block">
+          <h1 class="title">Liar's Dice</h1>
+          <br>
+          <p>Choose an option:</p>
+          <button @click="signUpScreen()">Sign Up</button>
+          <button @click="logInScreen()">Log In</button>
+        </div>
+      </div>
+
+      <!-- Sign Up Screen -->
+      <div v-if="screen == 'signup'" class="center">
+        <div class="block">
+          <h1 class="title">Liar's Dice</h1>
+          <br>
+          <p>Please enter your desired screen name:</p>
+          <input v-model="username" type="text"><br><br>
+          <p>Please enter your desired password:</p>
+          <input v-model="password" type="password"><br><br>
+          <button v-if="available && credentialsReady" @click="addNewUser()">Submit</button>
+          <button v-else class="disabled">Submit</button>
+          <br><br>
+          <p v-if="!available" class="error">That username is already in use. Please choose another.</p><br>
+
+          <p>(Please note this is extremely insecure, and it's likely a bunch of people you don't know will see these passwords, so just use something stupid like "dog".)</p><br>
+          <p><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="logInScreen()">Log In</span> instead.</p>
+        </div>
+      </div>
+
+      <!-- Login Screen -->
+      <div v-if="screen == 'login'" class="center">
+        <div class="block">
+          <h1 class="title">Liar's Dice</h1>
+          <br>
+          <p>Please enter your username:</p>
+          <input v-model="username" type="text"><p>Please enter your password:</p>
+          <input v-model="password" type="password"><br><br>
+          <button @click="logIn()">Submit</button>
+          <br><br>
+          <p v-if="logInError == 'username'" class="error">The username doesn't exist. Please try again.</p>
+          <p v-if="logInError == 'password'" class="error">The password is incorrect. Please try again.</p><br>
+          <p><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="signUpScreen()">Sign Up</span> instead.</p>
+        </div>
+      </div>
+
+      <!-- Waiting Room Screen -->
+      <div v-if="screen == 'waiting'" class="center">
+        <div class="block">
+          <h1 class="title">Liar's Dice</h1>
+          <br>
+          <p>Player 1: {{ username }}</p>
+        </div>
+      </div>
+
+    <!-- Finish Vue -->
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+
+  <!-- Firebase Configuration -->
+  <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-firestore.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyDOlAwdbcUaZ5c8ghdbA9I2W1kKgsoLFw8",
+      authDomain: "liars-dice-dmz.firebaseapp.com",
+      databaseURL: "https://liars-dice-dmz.firebaseio.com",
+      projectId: "liars-dice-dmz",
+      storageBucket: "liars-dice-dmz.appspot.com",
+      messagingSenderId: "343396169646",
+      appId: "1:343396169646:web:249207e90fca28502c3a3f"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/javascript" src="scripts/script.js"></script>
+</body>
+
+</html>

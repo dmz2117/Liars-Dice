@@ -1,0 +1,44 @@
+html, body {
+  font-family: Helvetica, sans-serif;
+  color: white;
+  background-color:rgb(20,100,20);
+}
+
+.display {
+  height: 100vh;
+  width: 100vw;
+  padding: 20vh;
+  text-align: center;
+  display: inline-block;
+  margin: auto;
+}
+
+.clickable {
+   text-decoration: underline;
+   color: rgb(200,200,255);
+}
+
+.error {
+  color: rgb(255,80,80);
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.title {
+  font-family: 'Bungee Shade';
+}
+
+.center {
+  text-align: center;
+}
+
+.block {
+  text-align: center;
+  display: inline-block;
+  margin: auto;
+  padding: 20px;
+  border: 5px solid white;
+  border-radius: 20px;
+}
