@@ -1,5 +1,7 @@
 let db = firebase.firestore();
-let xxx = db.collection('xxx');
+let usersRef = db.collection('users');
+
+
 
 let app = new Vue({
   el: "#app",
@@ -11,9 +13,7 @@ let app = new Vue({
     logInError: "",
     username: "",
     password: "",
-    users: [
-      {username: "Dave", password: "12345", waiting: false, loggedIn: false}
-    ],
+    users: [],
   },
 
 // COMPUTED
@@ -23,13 +23,14 @@ let app = new Vue({
     // Login Stuff
 
     available: function () {
-      for (i in this.users) {
-        if (this.username == this.users[i].username) {
-          return false;
-        } else {
-          return true;
+      let state = true;
+      // Jin's elegant code
+      for (user of this.users) {
+        if (this.username == user.username) {
+          state = false;
         }
       }
+      return state;
     },
 
     credentialsReady: function () {
@@ -50,19 +51,15 @@ let app = new Vue({
     startScreen() {
       this.screen = "start";
     },
-
     signUpScreen() {
       this.screen = "signup";
     },
-
     logInScreen() {
       this.screen = "login";
     },
-
     waitingScreen() {
       this.screen = "waiting";
     },
-
     gameScreen() {
       this.screen = "game";
     },
@@ -71,7 +68,7 @@ let app = new Vue({
 
     addNewUser() {
       if (this.available) {
-        this.users.push({username: this.username, password: this.password, waiting: true, loggedIn: true});
+        usersRef.add({username: this.username, password: this.password, waiting: true, ready: false, loggedIn: true});
         this.waitingScreen();
       }
     },
@@ -91,5 +88,19 @@ let app = new Vue({
         }
       }
     },
+  },
+
+// MOUNTED
+
+  mounted() {
+
+    // Real time
+    usersRef.onSnapshot(querySnapshot => {
+      let users = [];
+      querySnapshot.forEach(doc => {
+        users.push(doc.data());
+      });
+      this.users = users;
+    })
   }
-});
+})

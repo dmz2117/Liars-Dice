@@ -24,9 +24,12 @@
         <div class="block">
           <h1 class="title">Liar's Dice</h1>
           <br>
-          <p>Choose an option:</p>
+          <div>Choose an option:</div>
+          <br>
           <button @click="signUpScreen()">Sign Up</button>
           <button @click="logInScreen()">Log In</button>
+          <br>
+          <br>
         </div>
       </div>
 
@@ -35,17 +38,26 @@
         <div class="block">
           <h1 class="title">Liar's Dice</h1>
           <br>
-          <p>Please enter your desired screen name:</p>
-          <input v-model="username" type="text"><br><br>
-          <p>Please enter your desired password:</p>
-          <input v-model="password" type="password"><br><br>
-          <button v-if="available && credentialsReady" @click="addNewUser()">Submit</button>
-          <button v-else class="disabled">Submit</button>
-          <br><br>
-          <p v-if="!available" class="error">That username is already in use. Please choose another.</p><br>
-
-          <p>(Please note this is extremely insecure, and it's likely a bunch of people you don't know will see these passwords, so just use something stupid like "dog".)</p><br>
-          <p><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="logInScreen()">Log In</span> instead.</p>
+          <br>
+          <form>
+            <div>Please enter your desired screen name:</div>
+            <input v-model="username" type="text">
+            <br>
+            <br>
+            <div>Please enter your desired password:</div>
+            <input v-model="password" type="password">
+            <br>
+            <br>
+            <button v-if="available && credentialsReady" @click="addNewUser()">Submit</button>
+            <button v-else class="disabled">Submit</button>
+          </form>
+          <br>
+          <br>
+          <div v-if="!available" class="error">That username is already in use. Please choose another.</div>
+          <br>
+          <div>(Please note that at the moment this is extremely insecure, and your password is essentially visible to anyone, so just use something like "12345".)</div>
+          <br>
+          <div><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="logInScreen()">Log In</span> instead.</div>
         </div>
       </div>
 
@@ -54,14 +66,18 @@
         <div class="block">
           <h1 class="title">Liar's Dice</h1>
           <br>
-          <p>Please enter your username:</p>
-          <input v-model="username" type="text"><p>Please enter your password:</p>
-          <input v-model="password" type="password"><br><br>
-          <button @click="logIn()">Submit</button>
+          <br>
+          <form>
+            <div>Please enter your username:</div>
+            <input v-model="username" type="text"><br><br>
+            <div>Please enter your password:</div>
+            <input v-model="password" type="password"><br><br>
+            <button @click="logIn()">Submit</button>
+          </form>
           <br><br>
-          <p v-if="logInError == 'username'" class="error">The username doesn't exist. Please try again.</p>
-          <p v-if="logInError == 'password'" class="error">The password is incorrect. Please try again.</p><br>
-          <p><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="signUpScreen()">Sign Up</span> instead.</p>
+          <div v-if="logInError == 'username'" class="error">The username doesn't exist. Please try again.</div>
+          <div v-if="logInError == 'password'" class="error">The password is incorrect. Please try again.</div><br>
+          <div><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="signUpScreen()">Sign Up</span> instead.</div>
         </div>
       </div>
 
@@ -70,8 +86,9 @@
         <div class="block">
           <h1 class="title">Liar's Dice</h1>
           <br>
-          <p>Player 1: {{ username }}</p>
+          <div>Welcome, {{ username }}!</div>
         </div>
+            <!--    <li><ul v-for="user in users">{{ user.username }}</ul></li>  -->
       </div>
 
     <!-- Finish Vue -->
