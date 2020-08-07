@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href='https://fonts.googleapis.com/css?family=Bungee Shade' rel='stylesheet'>
   <link href='https://fonts.googleapis.com/css?family=Monoton' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="styles/style.css">
 
   <title>Liar's Dice Online</title>
@@ -26,8 +28,8 @@
           <br>
           <div>Choose an option:</div>
           <br>
-          <button @click="signUpScreen()">Sign Up</button>
-          <button @click="logInScreen()">Log In</button>
+          <button type="button" @click="signUpScreen()">Sign Up</button>
+          <button type="button" @click="logInScreen()">Log In</button>
           <br>
           <br>
         </div>
@@ -48,8 +50,8 @@
             <input v-model="password" type="password">
             <br>
             <br>
-            <button v-if="available && credentialsReady" @click="addNewUser()">Submit</button>
-            <button v-else class="disabled">Submit</button>
+            <button type="button" v-if="available && credentialsReady" @click="addNewUser()">Submit</button>
+            <button type="button" v-else class="disabled">Submit</button>
           </form>
           <br>
           <br>
@@ -72,7 +74,7 @@
             <input v-model="username" type="text"><br><br>
             <div>Please enter your password:</div>
             <input v-model="password" type="password"><br><br>
-            <button @click="logIn()">Submit</button>
+            <button type="button" @click="logIn()">Submit</button>
           </form>
           <br><br>
           <div v-if="logInError == 'username'" class="error">The username doesn't exist. Please try again.</div>
@@ -87,8 +89,27 @@
           <h1 class="title">Liar's Dice</h1>
           <br>
           <div>Welcome, {{ username }}!</div>
+          <button type="button" v-if="!currentUser.ready" @click="getReady">Ready!</button>
+          <br>
+          <div v-if="everyoneReady">Everyone is ready! Enjoy your game!</div>
+          <div v-else>Waiting for other players...</div>
+          <div>
+            <waiting-room v-for="user in waitingUsers" v-bind="user"></waiting-room>
+          </div>
         </div>
-            <!--    <li><ul v-for="user in users">{{ user.username }}</ul></li>  -->
+      </div>
+
+      <!-- Game Screen -->
+      <div v-if="screen == 'game'" class="center">
+        <div class="block">
+          <h1 class="title">Liar's Dice</h1>
+          <br>
+          <div>Welcome, {{ username }}!</div>
+          <br>
+          <div>
+            <waiting-room v-for="user in waitingUsers" v-bind="user"></waiting-room>
+          </div>
+        </div>
       </div>
 
     <!-- Finish Vue -->
