@@ -78,25 +78,28 @@ let app = new Vue({
     },
 
     everyoneReady: function () {
-      state = false;
+      let readiness = [];
       for (user of this.waitingUsers) {
-        if (user.ready == false) {
-          state = false;
-          break;
-        }
+        readiness.push(user.ready)
       }
-      return state;
-    }
+      return readiness.every(x => x);
+    },
+
+    // Game
+
+
+
   },
 
 // WATCH
 
   watch: {
     everyoneReady: function() {
-      setTimeout(() => this.gameScreen(), 5000);
+      if (this.everyoneReady == true) {
+        setTimeout(() => this.gameScreen(), 2000);
+      }
     }
   },
-
 
 // METHODS
 
@@ -141,7 +144,6 @@ let app = new Vue({
             if (this.password == user.password) {
               this.getUserID();
               this.waitingScreen();
-              setTimeout(() => this.makeNotReady(), 500);
               break;
             } else {
               this.logInError = "password";
@@ -152,11 +154,10 @@ let app = new Vue({
     },
 
     getUserID() {
-      this.id = usersRef.where("username", "==", this.username)
+      usersRef.where("username", "==", this.username)
         .get().then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            this.id = doc.id;
-          })
+          this.id = querySnapshot.docs[0].id;
+          this.makeNotReady();
         });
     },
 
