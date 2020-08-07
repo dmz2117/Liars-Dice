@@ -89,7 +89,7 @@
           <h1 class="title">Liar's Dice</h1>
           <br>
           <div>Welcome, {{ username }}!</div>
-          <button type="button" v-if="!currentUser.ready" @click="getReady">Ready!</button>
+          <button type="button" v-if="!currentUser.ready && !currentUser.playing" @click="getReady">Ready!</button>
           <br>
           <div v-if="everyoneReady">Everyone is ready! Enjoy your game!</div>
           <div v-else>Waiting for other players...</div>

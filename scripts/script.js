@@ -16,8 +16,6 @@ Vue.component("waiting-room", {
         return "query_builder";
       }
     }
-  },
-  methods: {
   }
 });
 
@@ -78,16 +76,23 @@ let app = new Vue({
     },
 
     everyoneReady: function () {
-      let readiness = [];
-      for (user of this.waitingUsers) {
-        readiness.push(user.ready)
+      if (this.screen == "waiting" && this.waitingUsers.length > 1) {
+        let readiness = [];
+        for (user of this.waitingUsers) {
+          readiness.push(user.ready)
+        }
+        return readiness.every(x => x);
+      } else {
+        return false;
       }
-      return readiness.every(x => x);
+
     },
 
     // Game
 
-
+    players: function () {
+      return this.users.filter(i => i.playing);
+    }
 
   },
 
@@ -96,7 +101,8 @@ let app = new Vue({
   watch: {
     everyoneReady: function() {
       if (this.everyoneReady == true) {
-        setTimeout(() => this.gameScreen(), 2000);
+        setTimeout(() => this.gameScreen(), 3000);
+        setTimeout(() => this.goIntoGame(), 3000);
       }
     }
   },
@@ -175,6 +181,16 @@ let app = new Vue({
         ready: true
       });
     },
+
+    goIntoGame() {
+      usersRef.doc(this.id).update({
+        waiting: false,
+        ready: false,
+        playing: true
+      });
+    },
+
+    // Game
 
   },
 
