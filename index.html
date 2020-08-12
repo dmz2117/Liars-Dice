@@ -236,7 +236,7 @@
           <br>
           <br>
           <div class="verticalBox">
-            <div v-for="room in rooms" class="verticalBox otherPlayerStatusWait">
+            <div v-for="room in rooms" class="verticalBox borderBox">
               <div class="gameFont">Room {{ room.roomNumber }}</div>
               <waiting-room v-for="user in waitingUsers" v-bind="user" :this-room="room.roomNumber"></waiting-room>
               <button v-if="currentUser.room != room.roomNumber" @click="joinRoom(room.roomNumber)">Join this room</button>
@@ -255,16 +255,10 @@
       </div>
 
       <!-- Game Screen -->
-      <div v-if="screen == 'game'" class="center">
-        <div class="block">
-          <h1 class="title">Liar's Dice</h1>
-          <br>
-          <div>Welcome, {{ username }}! THIS IS THE GAME SCREEN</div>
-          <br>
-          <div>
-            <waiting-room v-for="user in waitingUsers" v-bind="user"></waiting-room>
-          </div>
-        </div>
+      <div v-if="screen == 'game'" class="flexPlayArea">
+        <div class="title">Liar's Dice</div>
+          <game-other-players v-for="otherPlayer in otherPlayers" v-bind="otherPlayer" :room-bid-face="room.bidFace" :room-bid-number="room.bidNumber"></game-other-players>
+
       </div>
 
     <!-- Finish Vue -->

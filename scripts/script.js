@@ -28,15 +28,26 @@ Vue.component("waiting-room", {
 });
 
 Vue.component("game-other-players", {
-  props: ["username", "mood", "dice", "action", "bidNumber", "bidFace", "turn"],
-  template: `<div :class="{ otherPlayerTurn: turn, otherPlayerWait: !turn }" class="flexBox">
-              <div style="width: 20%">
-                <div>{{ username }}</div>
-                <div class="moodBox">{{ mood }}</div>
-              </div>
-              <div style="width: 50%; border-right: 1px solid white"><div style="font-size: 50px, vertical-align: middle" class="material-icons" v-for="die in dice">check_box_outline_blank</div></div>
-              <div style="width: 30%" class="gameFont">{{ action }} <span v-if="action == 'bid'" style="vertical-align: middle" class="gameFont">{{ bidNumber }} <span style="vertical-align: middle" class="material-icons">close</span> <span style=" vertical-align: middle">{{ dieFaceReplace }}</span></span></div>
-            </div>`,
+  props: ["username", "mood", "dice", "action", "bidNumber", "bidFace", "turn", "photoURL", "roomBidFace", "roomBidNumber"],
+  template: ` <div :class="{ !turn : otherPlayerStatusWait, turn : otherPlayerStatusTurn }">
+                <div class="verticalBox">
+                  <div>Mo</div>
+                  <div v-if="mood != ''" class="moodFace">{{ mood }}</div><div v-else><img class="playerImage" :src="photoURL"></div>
+                </div>
+                <div class="otherPlayerDice">
+                    <div class="diceBig" v-for="die in dice"></div>
+                </div>
+                <div class="verticalBox" :class="{ action == '' : hide }">
+                  <div class="gameFont"> {{ action }} </div>
+                  <div class="horizontalBox">
+                    <div v-if="action == 'bid'" class="gameFont">{{ bidNumber }}</div>
+                    <div v-if="action == 'challenge'" class="gameFont">{{ roomBidNumber }}</div>
+                    <div class="material-icons">close</div>
+                    <div v-if="action == 'bid'">{{ dieFaceReplace }}</div>
+                    <div v-if="action == 'challenge'">{{ dieFaceReplaceRoom }}</div>
+                  </div>
+                </div>
+              </div>`,
   computed: {
     isReady() {
       if (this.ready) {
@@ -96,6 +107,72 @@ Vue.component("game-other-players", {
             </div>
           </div>`;
       } else if (this.bidFace == 6) {
+        return
+        `<div class="diceSmall sixth-face">
+          <div class="column">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>
+          <div class="column">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>
+        </div>`;
+      }
+    },
+
+    dieFaceReplaceRoom() {
+      if (this.roomBidFace == 1) {
+        return
+          `<div class="diceSmall first-face">
+            <span class="dotSmall">
+            </span>
+          </div>`;
+      } else if (this.roomBidFace == 2) {
+        return
+          `<div class="diceSmall second-face">
+            <span class="dotSmall">
+            </span>
+            <span class="dotSmall">
+            </span>
+          </div>`;
+      } else if (this.roomBidFace == 3) {
+        return
+          `<div class="diceSmall third-face">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>`;
+      } else if (this.roomBidFace == 4) {
+        return
+          `<div class="diceSmall fourth-face">
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+          </div>`;
+      } else if (this.roomBidFace == 5) {
+        return
+          `<div class="diceSmall fifth-face">
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+          </div>`;
+      } else if (this.roomBidFace == 6) {
         return
         `<div class="diceSmall sixth-face">
           <div class="column">
@@ -207,6 +284,17 @@ let app = new Vue({
       }
     },
 
+    currentRoom: function () {
+      var thisRoom;
+      for (i of this.rooms) {
+        if (i.roomNumber == this.currentUser.room) {
+          return i;
+        } else {
+          return null;
+        }
+      }
+    },
+
     currentRoomID: function () {
       return "room-" + String(this.currentUser.room);
     },
@@ -218,7 +306,7 @@ let app = new Vue({
     // Game
 
     otherPlayers: function () {
-      var playerList = []
+      var playerList = [];
       for (i of this.users) {
         if (i.room == this.currentUser.room && i.id != this.id) {
           playerList.push(i);
@@ -227,6 +315,23 @@ let app = new Vue({
       return playerList;
     },
 
+    otherPlayersSorted: function () {
+      var playerSort = [];
+      var num = this.currentUser.player + 1;
+      for (i = 0; i < this.allPlayers.length; i++) {
+        if (num > this.allPlayers.length) {
+          num = 1;
+        }
+        for (j in this.otherPlayers) {
+          if (j.player == num) {
+            playerSort.push(j);
+          }
+        }
+        num++;
+      }
+      return playerSort;
+    },
+    
     allPlayers: function () {
       return this.users.filter(i => i.room == this.currentUser.room);
     },
@@ -234,7 +339,7 @@ let app = new Vue({
     allDice: function () {
       var everyDie = [];
       for (i of this.allPlayers) {
-        everyDie.concat(i.dice)
+        everyDie.concat(i.dice);
       }
       return everyDie;
     }
@@ -251,7 +356,15 @@ let app = new Vue({
       }
     }
   },
-
+/*
+  playerTurn: function () {
+    if (this.currentRoom.turn == this.currentUser.player) {
+      usersRef.doc(this.id).update({
+        turn: true
+      });
+    }
+  },
+*/
 // METHODS
 
   methods: {
@@ -290,7 +403,8 @@ let app = new Vue({
           bidFace: 0,
           bidNumber: 0,
           mood: "",
-          player: 0
+          player: 0,
+          turn: false
         }, {merge:true})
         .then(this.waitingScreen());
       });
