@@ -1,13 +1,163 @@
 html, body {
   font-family: Helvetica, sans-serif;
   color: white;
-  background-color:rgb(20,100,20);
+  background-color: rgb(20,100,20);
 }
 
+tr {
+  margin: auto;
+  padding: 5px;
+}
+
+select {
+  width: 100px;
+  height: 40px;
+  margin: 10px;
+}
+
+.flexPlayArea {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-around;
+  text-align: center;
+  width: 95vw;
+  max-width: 1000px;
+  min-width: 300px;
+  margin: 20px 5px 0px 5px;
+  padding: 20px;
+  border: 5px solid white;
+  border-radius: 20px;
+}
+
+.title {
+  font-size: 40px;
+  font-family: 'Bungee Shade';
+}
+
+.gameFont {
+  font-size: 20px;
+  font-family: 'Rubik Mono One';
+}
+
+.otherPlayerStatusTurn {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+  margin-top: 10px;
+  border: 5px solid lightgreen;
+  border-radius: 20px;
+}
+
+.otherPlayerStatusWait {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+  margin-top: 10px;
+  border: 1px solid white;
+  border-radius: 20px;
+}
+
+.playerStatusTurn {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+  border: 5px solid lightgreen;
+  border-radius: 20px;
+}
+
+.playerStatusWait {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+  border: 5px solid white;
+  border-radius: 20px;
+}
+
+.playerAppearance {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+  border: 5px solid white;
+  border-radius: 20px;
+}
+
+.verticalBox {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.horizontalBox {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.moodBoard {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.moodFace {
+  font-size: 50px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: inline-block;
+}
+
+.bigMoodFace {
+  font-size: 100px;
+  margin-left: 25px;
+  margin-right: 25px;
+  display: inline-block;
+}
+
+.spacer {
+  width: 40px;
+  height: 40px;
+}
+
+.otherPlayerDice {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.playerImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin: 5px;
+}
+
+/*
 .display {
   height: 100vh;
   width: 100vw;
-  padding: 20vh;
+  padding: 5vh;
   text-align: center;
   display: inline-block;
   margin: auto;
@@ -26,9 +176,6 @@ html, body {
   opacity: 0.5;
 }
 
-.title {
-  font-family: 'Bungee Shade';
-}
 
 .center {
   text-align: center;
@@ -41,4 +188,33 @@ html, body {
   padding: 20px;
   border: 5px solid white;
   border-radius: 20px;
+}
+
+.moodBoxUser {
+  padding: 5px;
+  font-size: 80px;
+  display: inline-block;
+}
+
+.playerControlsWait {
+  border: 5px solid white;
+  border-radius: 20px;
+}
+
+.playerControlsTurn {
+  border: 5px solid lightgreen;
+  border-radius: 20px;
+}
+
+.flexBox {
+  display: flex;
+  width: 70vw;
+  text-align: center;
+  margin: 10px;
+  padding: 5px;
+  align-items: center;
+}
+
+.diceAppearance {
+  font-size: 80px;
 }

@@ -13,15 +13,204 @@
   <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/dice.css">
 
   <title>Liar's Dice Online</title>
 </head>
 
 <body>
   <div id="app">
-    <div class="display center">
-
+    <div style="text-align: center">
       <!-- Start Screen -->
+
+      <div v-if="screen == 'start'" class="flexPlayArea">
+        <div class="title">Liar's Dice</div>
+<!--
+        <div class="otherPlayerStatusWait">
+          <div class="verticalBox">
+            <div>Mo</div>
+            <div class="moodFace">🤬</div>
+          </div>
+          <div class="otherPlayerDice">
+              <div class="diceBig" <v-for="die in waitingUsers[0].dice"></div>
+          </div>
+          <div class="verticalBox">
+            <div class="gameFont"> Bid </div>
+            <div class="horizontalBox">
+              <div v-if="waitingUsers[0].action == 'bid'" class="gameFont">{{ waitingUsers[0].bidNumber }}</div>
+              <div class="material-icons">close</div>
+              <div>
+                <div class="diceSmall third-face">
+                  <span class="dotSmall"></span>
+                  <span class="dotSmall"></span>
+                  <span class="dotSmall"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="otherPlayerStatusWait">
+          <div class="verticalBox">
+            <div>Mo</div>
+            <div class="moodFace">🤬</div>
+          </div>
+          <div class="otherPlayerDice">
+            <div class="diceBig" <v-for="die in waitingUsers[0].dice"></div>
+          </div>
+          <div class="verticalBox">
+            <div class="gameFont"> Challenge </div>
+            <div class="horizontalBox">
+              <div v-if="waitingUsers[0].action == 'bid'" class="gameFont">{{ waitingUsers[0].bidNumber }}</div>
+              <div class="material-icons">close</div>
+              <div>
+                <div class="diceSmall third-face">
+                  <span class="dotSmall"></span>
+                  <span class="dotSmall"></span>
+                  <span class="dotSmall"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gameFont" style="margin-top: 10px;">
+          Mo bid 3 x 3.
+        </div>
+
+        <div class="playerStatusTurn">
+          <div class="verticalBox">
+            <div class="gameFont">Your Hand</div>
+            <div class="horizontalBox">
+
+              TO BE REPLACED WITH BIG DICE COMPONENT
+              <div class="diceBig fifth-face">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>
+
+              <div class="diceBig fourth-face">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>
+
+              <div class="diceBig first-face">
+                <span class="dotBig">
+                </span>
+              </div>
+
+              <div class="diceBig sixth-face">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>
+
+              <div class="diceBig fourth-face">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="verticalBox">
+            <div class="horizontalBox">
+              <div class="verticalBox">
+                <div class="material-icons spacer" @click="selectedNumberUp()">arrow_upward</div>
+                <div v-if="waitingUsers[0].action == 'bid'" class="gameFont spacer">{{ waitingUsers[0].bidNumber }}</div>
+                <div class="material-icons spacer" @click="selectedNumberDown()">arrow_downward</div>
+              </div>
+              <div class="material-icons spacer">close</div>
+              <div class="verticalBox">
+                <div class="material-icons spacer" @click="selectedNumberUp()">arrow_upward</div>
+                <div class="spacer" style="margin-left: 15px">
+                  <div class="diceSmall third-face">
+                    <span class="dotSmall"></span>
+                    <span class="dotSmall"></span>
+                    <span class="dotSmall"></span>
+                  </div>
+                </div>
+                <div class="material-icons spacer" @click="selectedNumberDown()">arrow_downward</div>
+              </div>
+            </div>
+            <button class="gameFont">Bid</button>
+          </div>
+          <div class="verticalBox">
+            <div class="spacer"></div>
+            <div class="horizontalBox">
+              <div v-if="waitingUsers[0].action == 'bid'" class="gameFont spacer">{{ waitingUsers[0].bidNumber }}</div>
+              <div class="material-icons spacer">close</div>
+              <div class="spacer" style="margin-left: 15px">
+                <div class="diceSmall third-face">
+                  <span class="dotSmall"></span>
+                  <span class="dotSmall"></span>
+                  <span class="dotSmall"></span>
+                </div>
+              </div>
+            </div>
+            <div class="spacer"></div>
+            <button class="gameFont">Challenge</button>
+          </div>
+        </div>
+
+        <div class="moodBoard">
+          <div class="verticalBox" style="margin-top: 10px">
+            <div class="gameFont">Mood</div>
+            <div class="moodBoard">
+              <div class="moodFace">😀</div>
+              <div class="moodFace">😁</div>
+              <div class="moodFace">😰</div>
+              <div class="moodFace">😳</div>
+              <div class="moodFace">😭</div>
+            </div>
+            <div class="moodBoard">
+              <div class="moodFace">😤</div>
+              <div class="moodFace">🤬</div>
+              <div class="moodFace">😇</div>
+              <div class="moodFace">😈</div>
+              <div class="moodFace">🖕</div>
+            </div>
+          </div>
+          <div class="playerAppearance" style="margin-top: 10px">
+            <div class="gameFont">Dave</div>
+            <div class="bigMoodFace">😰</div>
+          </div>
+        </div>
+-->
+                <button type="button" name="button" @click="logInGoogle">LOG IN</button>
+
+
+      </div>
+
+      <!-- Original Start Screen
+
       <div v-if="screen == 'start'" class="center">
         <div class="block">
           <h1 class="title">Liar's Dice</h1>
@@ -35,67 +224,33 @@
         </div>
       </div>
 
-      <!-- Sign Up Screen -->
-      <div v-if="screen == 'signup'" class="center">
-        <div class="block">
-          <h1 class="title">Liar's Dice</h1>
-          <br>
-          <br>
-          <form>
-            <div>Please enter your desired screen name:</div>
-            <input v-model="username" type="text">
-            <br>
-            <br>
-            <div>Please enter your desired password:</div>
-            <input v-model="password" type="password">
-            <br>
-            <br>
-            <button type="button" v-if="available && credentialsReady" @click="addNewUser()">Submit</button>
-            <button type="button" v-else class="disabled">Submit</button>
-          </form>
-          <br>
-          <br>
-          <div v-if="!available" class="error">That username is already in use. Please choose another.</div>
-          <br>
-          <div>(Please note that at the moment this is extremely insecure, and your password is essentially visible to anyone, so just use something like "12345".)</div>
-          <br>
-          <div><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="logInScreen()">Log In</span> instead.</div>
-        </div>
-      </div>
+    -->
 
-      <!-- Login Screen -->
-      <div v-if="screen == 'login'" class="center">
-        <div class="block">
-          <h1 class="title">Liar's Dice</h1>
-          <br>
-          <br>
-          <form>
-            <div>Please enter your username:</div>
-            <input v-model="username" type="text"><br><br>
-            <div>Please enter your password:</div>
-            <input v-model="password" type="password"><br><br>
-            <button type="button" @click="logIn()">Submit</button>
-          </form>
-          <br><br>
-          <div v-if="logInError == 'username'" class="error">The username doesn't exist. Please try again.</div>
-          <div v-if="logInError == 'password'" class="error">The password is incorrect. Please try again.</div><br>
-          <div><span class="clickable" @click="startScreen()">Go Back</span> or <span class="clickable" @click="signUpScreen()">Sign Up</span> instead.</div>
-        </div>
-      </div>
 
       <!-- Waiting Room Screen -->
-      <div v-if="screen == 'waiting'" class="center">
-        <div class="block">
+      <div v-if="screen == 'waiting'" class="flexPlayArea">
+        <div>
           <h1 class="title">Liar's Dice</h1>
           <br>
           <div>Welcome, {{ username }}!</div>
-          <button type="button" v-if="!currentUser.ready && !currentUser.playing" @click="getReady">Ready!</button>
           <br>
-          <div v-if="everyoneReady">Everyone is ready! Enjoy your game!</div>
-          <div v-else>Waiting for other players...</div>
-          <div>
-            <waiting-room v-for="user in waitingUsers" v-bind="user"></waiting-room>
-          </div>
+          <br>
+          <div class="verticalBox">
+            <div v-for="room in rooms" class="verticalBox otherPlayerStatusWait">
+              <div class="gameFont">Room {{ room.roomNumber }}</div>
+              <waiting-room v-for="user in waitingUsers" v-bind="user" :this-room="room.roomNumber"></waiting-room>
+              <button v-if="currentUser.room != room.roomNumber" @click="joinRoom(room.roomNumber)">Join this room</button>
+              <div v-if="!currentUser.ready && currentUser.room == room.roomNumber">
+                <button type="button" @click="getReady">Ready!</button>
+                <div>Game will start when everyone clicks "ready".</div>
+              </div>
+              <div v-if="currentUser.room == room.roomNumber">
+                <div v-if="everyoneReady">Everyone is ready! Enjoy your game!</div>
+                <div v-else>Waiting for other players...</div>
+              </div>
+            </div><br>
+          </div><br>
+          <button v-if="availableRooms.length == 0" @click="makeNewRoom()">Make new room</button>
         </div>
       </div>
 
@@ -121,6 +276,7 @@
   <!-- Firebase Configuration -->
   <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-auth.js"></script>
   <script>
     // Your web app's Firebase configuration
     var firebaseConfig = {
@@ -141,3 +297,53 @@
 </body>
 
 </html>
+
+<!--Temporary Component GAME SCREEN Test
+
+<game-other-players v-for="user in waitingUsers" v-bind="user"></game-other-players>
+
+<div :class="{ playerControlsTurn: waitingUsers[0].turn, playerControlsWait: !waitingUsers[0].turn }" class="flexBox">
+  <div style="width: 80%">
+    <div class="gameFont"> Your Hand</div>
+    <div><dice-rolled v-for="die in waitingUsers[0].dice" :die="die" :key="die.id"></dice-rolled></div>
+  </div>
+  <div style="width: 20%">
+    <div class="gameFont"> {{ waitingUsers[0].username }} </div>
+    <div class="moodBoxUser"> {{ waitingUsers[0].mood }} </div>
+  </div>
+</div>
+
+<div class="flexbox" style="margin-top: 20px">
+  <div>
+    <button type="button" class="gameFont" @click="signUpScreen()">Bid</button>
+    &nbsp;or&nbsp;
+    <button type="button" class="gameFont" @click="logInScreen()">Challenge</button>
+  </div>
+  <div>
+    <div class="gameFont">
+      <span class="material-icons" @click="selectedNumberDown()">arrow_downward </span>
+      {{ selectedNumber }}
+      <span class="material-icons" @click="selectedNumberUp()"> arrow_upward</span>
+      <span class="material-icons">close</span> <span style="font-size: 50px">⚀ ⚁ ⚂ ⚃ ⚄ ⚅</span>
+    </div>
+  </div>
+  <div class="gameFont">
+    Mood
+  </div>
+  <div>
+    <span class="moodBoard">😀</span>
+    <span class="moodBoard">😁</span>
+    <span class="moodBoard">😰</span>
+    <span class="moodBoard">😳</span>
+    <span class="moodBoard">😭</span>
+    <span class="moodBoard">😤</span>
+    <span class="moodBoard">🤬</span>
+    <span class="moodBoard">😇</span>
+    <span class="moodBoard">😈</span>
+    <span class="moodBoard">🖕</span>
+  </div>
+</div>
+
+</div>
+
+<!--Temporary Component Test END-->

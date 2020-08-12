@@ -1,0 +1,89 @@
+.diceSmall {
+  padding: 2.5px;
+  background-color: white;
+  width: 25px;
+  height: 25px;
+  border-radius: 10%;
+  margin-right : 10px;
+}
+
+.dotSmall {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgb(20,100,20);
+}
+
+.diceBig {
+  padding: 5px;
+  background-color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 10%;
+  margin-right : 10px;
+}
+
+.dotBig {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgb(20,100,20);
+}
+
+.first-face {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.second-face{
+  display: flex ;
+  justify-content: space-between;
+}
+
+.second-face .dotSmall:nth-of-type(2) {
+  align-self: flex-end;
+}
+
+.second-face .dotBig:nth-of-type(2) {
+  align-self: flex-end;
+}
+
+.third-face {
+  display: flex;
+  justify-content: space-between;
+}
+
+.third-face .dotSmall:nth-of-type(1) {
+  align-self :flex-end;
+}
+
+.third-face .dotBig:nth-of-type(1) {
+  align-self :flex-end;
+}
+
+.third-face .dotSmall:nth-of-type(2) {
+  align-self :center;
+}
+
+.third-face .dotBig:nth-of-type(2) {
+  align-self :center;
+}
+
+
+.fourth-face , .sixth-face, .fifth-face{
+  display: flex;
+  justify-content: space-between;
+}
+
+.fourth-face .column , .sixth-face .column, .fifth-face .column{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fifth-face .column:nth-of-type(2) {
+  justify-content: center;
+}
