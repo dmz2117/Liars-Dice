@@ -176,7 +176,13 @@ let app = new Vue({
     },
 
     roomWaitingUsers: function () {
-      return this.users.filter(i => i.waiting && i.room == currentUser.room);
+      let roomUsers = [];
+      for (user of this.waitingUsers) {
+        if (user.room == this.currentUser.room) {
+          roomUsers.push(user);
+        }
+      }
+      return roomUsers;
     },
 
     everyoneReady: function () {
@@ -305,6 +311,10 @@ let app = new Vue({
         ready: false,
         waiting: true
       });
+    },
+
+    checkRoom(check) {
+      return check.room == this.currentUser.room;
     },
 
     makeNotReady() {
