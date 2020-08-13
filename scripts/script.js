@@ -28,44 +28,111 @@ Vue.component("waiting-room", {
 });
 
 Vue.component("game-other-players", {
-  props: ["username", "mood", "dice", "action", "bidNumber", "bidFace", "turn", "photoURL", "roomBidFace", "roomBidNumber"],
-  template: ` <div :class="{ !turn : otherPlayerStatusWait, turn : otherPlayerStatusTurn }">
+  props: ["username", "mood", "dice", "action", "bidNumber", "bidFace", "turn", "photoURL", "roomBidFace", "roomBidNumber", "roomShowDice"],
+
+  template: ` <div :class="{ otherPlayerStatusWait : !turn , otherPlayerStatusTurn : turn }">
                 <div class="verticalBox">
-                  <div>Mo</div>
+                  <div>{{ username }}</div>
                   <div v-if="mood != ''" class="moodFace">{{ mood }}</div><div v-else><img class="playerImage" :src="photoURL"></div>
                 </div>
-                <div class="otherPlayerDice">
+                <div v-if="!roomShowDice" class="otherPlayerDice">
                     <div class="diceBig" v-for="die in dice"></div>
                 </div>
-                <div class="verticalBox" :class="{ action == '' : hide }">
+                <div v-if="roomShowDice" class="otherPlayerDice" v-html="dieFaceReplaceBig"></div>
+                <div class="verticalBox" style="min-width: 160px" :class="{ hide : action == '' }">
                   <div class="gameFont"> {{ action }} </div>
                   <div class="horizontalBox">
                     <div v-if="action == 'bid'" class="gameFont">{{ bidNumber }}</div>
                     <div v-if="action == 'challenge'" class="gameFont">{{ roomBidNumber }}</div>
                     <div class="material-icons">close</div>
-                    <div v-if="action == 'bid'">{{ dieFaceReplace }}</div>
-                    <div v-if="action == 'challenge'">{{ dieFaceReplaceRoom }}</div>
+                    <div v-if="action == 'bid'" v-html="dieFaceReplace"></div>
+                    <div v-if="action == 'challenge'" v-html="dieFaceReplaceRoom"></div>
                   </div>
                 </div>
               </div>`,
+
   computed: {
-    isReady() {
-      if (this.ready) {
-        return "check_box_outline_blank";
-      } else {
-        return "query_builder";
+
+  dieFaceReplaceBig() {
+    var diceReplace = "";
+    for (i of this.dice) {
+      if (i == 1) {
+        diceReplace +=
+          `<div class="diceBig first-face">
+            <span class="dotBig">
+            </span>
+          </div>`;
+      } else if (i == 2) {
+        diceReplace +=
+          `<div class="diceBig second-face">
+            <span class="dotBig">
+            </span>
+            <span class="dotBig">
+            </span>
+          </div>`;
+      } else if (i == 3) {
+        diceReplace +=
+          `<div class="diceBig third-face">
+            <span class="dotBig"></span>
+            <span class="dotBig"></span>
+            <span class="dotBig"></span>
+          </div>`;
+      } else if (i == 4) {
+        diceReplace +=
+          `<div class="diceBig fourth-face">
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+          </div>`;
+      } else if (i == 5) {
+        diceReplace +=
+          `<div class="diceBig fifth-face">
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+            <div class="column">
+              <span class="dotBig"></span>
+            </div>
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+          </div>`;
+      } else if (i == 6) {
+        diceReplace +=
+        `<div class="diceBig sixth-face">
+          <div class="column">
+            <span class="dotBig"></span>
+            <span class="dotBig"></span>
+            <span class="dotBig"></span>
+          </div>
+          <div class="column">
+            <span class="dotBig"></span>
+            <span class="dotBig"></span>
+            <span class="dotBig"></span>
+          </div>
+        </div>`;
       }
-    },
+    }
+    return diceReplace;
+  },
 
     dieFaceReplace() {
+      var dieReplace = "";
       if (this.bidFace == 1) {
-        return
+        dieReplace =
           `<div class="diceSmall first-face">
             <span class="dotSmall">
             </span>
           </div>`;
       } else if (this.bidFace == 2) {
-        return
+        dieReplace =
           `<div class="diceSmall second-face">
             <span class="dotSmall">
             </span>
@@ -73,14 +140,14 @@ Vue.component("game-other-players", {
             </span>
           </div>`;
       } else if (this.bidFace == 3) {
-        return
+        dieReplace =
           `<div class="diceSmall third-face">
             <span class="dotSmall"></span>
             <span class="dotSmall"></span>
             <span class="dotSmall"></span>
           </div>`;
       } else if (this.bidFace == 4) {
-        return
+        dieReplace =
           `<div class="diceSmall fourth-face">
             <div class="column">
               <span class="dotSmall"></span>
@@ -92,7 +159,7 @@ Vue.component("game-other-players", {
             </div>
           </div>`;
       } else if (this.bidFace == 5) {
-        return
+        dieReplace =
           `<div class="diceSmall fifth-face">
             <div class="column">
               <span class="dotSmall"></span>
@@ -107,7 +174,7 @@ Vue.component("game-other-players", {
             </div>
           </div>`;
       } else if (this.bidFace == 6) {
-        return
+        dieReplace =
         `<div class="diceSmall sixth-face">
           <div class="column">
             <span class="dotSmall"></span>
@@ -121,17 +188,19 @@ Vue.component("game-other-players", {
           </div>
         </div>`;
       }
+      return dieReplace;
     },
 
     dieFaceReplaceRoom() {
+      var dieReplace = "";
       if (this.roomBidFace == 1) {
-        return
+        dieReplace =
           `<div class="diceSmall first-face">
             <span class="dotSmall">
             </span>
           </div>`;
       } else if (this.roomBidFace == 2) {
-        return
+        dieReplace =
           `<div class="diceSmall second-face">
             <span class="dotSmall">
             </span>
@@ -139,14 +208,14 @@ Vue.component("game-other-players", {
             </span>
           </div>`;
       } else if (this.roomBidFace == 3) {
-        return
+        dieReplace =
           `<div class="diceSmall third-face">
             <span class="dotSmall"></span>
             <span class="dotSmall"></span>
             <span class="dotSmall"></span>
           </div>`;
       } else if (this.roomBidFace == 4) {
-        return
+        dieReplace =
           `<div class="diceSmall fourth-face">
             <div class="column">
               <span class="dotSmall"></span>
@@ -158,7 +227,7 @@ Vue.component("game-other-players", {
             </div>
           </div>`;
       } else if (this.roomBidFace == 5) {
-        return
+        dieReplace =
           `<div class="diceSmall fifth-face">
             <div class="column">
               <span class="dotSmall"></span>
@@ -173,7 +242,7 @@ Vue.component("game-other-players", {
             </div>
           </div>`;
       } else if (this.roomBidFace == 6) {
-        return
+        dieReplace =
         `<div class="diceSmall sixth-face">
           <div class="column">
             <span class="dotSmall"></span>
@@ -187,6 +256,7 @@ Vue.component("game-other-players", {
           </div>
         </div>`;
       }
+      return dieReplace;
     },
   }
 });
@@ -226,6 +296,8 @@ let app = new Vue({
     username: "",
     users: [],
     rooms: [],
+    tempBidNumber: 1,
+    tempBidFace: 1
   },
 
 // COMPUTED
@@ -312,17 +384,13 @@ let app = new Vue({
           playerList.push(i);
         }
       }
-      return playerList;
-    },
-
-    otherPlayersSorted: function () {
       var playerSort = [];
       var num = this.currentUser.player + 1;
-      for (i = 0; i < this.allPlayers.length; i++) {
+      for (i = 0; i < playerList.length; i++) {
         if (num > this.allPlayers.length) {
           num = 1;
         }
-        for (j in this.otherPlayers) {
+        for (j of playerList) {
           if (j.player == num) {
             playerSort.push(j);
           }
@@ -331,7 +399,7 @@ let app = new Vue({
       }
       return playerSort;
     },
-    
+
     allPlayers: function () {
       return this.users.filter(i => i.room == this.currentUser.room);
     },
@@ -342,7 +410,241 @@ let app = new Vue({
         everyDie.concat(i.dice);
       }
       return everyDie;
-    }
+    },
+
+    turnAnnouncement: function () {
+      if (this.currentUser.turn) {
+        return "Your turn";
+      } else {
+        for (i of this.allPlayers) {
+          if (i.turn) {
+            return i.username + "'s turn";
+          }
+        }
+      }
+    },
+
+    firstTurn: function() {
+      if (this.currentRoom.totalTurns > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+
+    minimumBidNumber: function() {
+      return this.currentRoom.bidNumber + 1;
+    },
+
+    minimumBidFace: function() {
+      return this.currentRoom.bidFace;
+    },
+
+    dieFaceReplaceBig() {
+      var diceReplace = "";
+      for (i of this.currentUser.dice) {
+        if (i == 1) {
+          diceReplace +=
+            `<div class="diceBig first-face">
+              <span class="dotBig">
+              </span>
+            </div>`;
+        } else if (i == 2) {
+          diceReplace +=
+            `<div class="diceBig second-face">
+              <span class="dotBig">
+              </span>
+              <span class="dotBig">
+              </span>
+            </div>`;
+        } else if (i == 3) {
+          diceReplace +=
+            `<div class="diceBig third-face">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>`;
+        } else if (i == 4) {
+          diceReplace +=
+            `<div class="diceBig fourth-face">
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+            </div>`;
+        } else if (i == 5) {
+          diceReplace +=
+            `<div class="diceBig fifth-face">
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+            </div>`;
+        } else if (i == 6) {
+          diceReplace +=
+          `<div class="diceBig sixth-face">
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+          </div>`;
+        }
+      }
+      return diceReplace;
+    },
+
+    dieFaceReplace() {
+      var dieReplace = "";
+      if (this.tempBidFace == 1) {
+        dieReplace =
+          `<div class="diceSmall first-face">
+            <span class="dotSmall">
+            </span>
+          </div>`;
+      } else if (this.tempBidFace == 2) {
+        dieReplace =
+          `<div class="diceSmall second-face">
+            <span class="dotSmall">
+            </span>
+            <span class="dotSmall">
+            </span>
+          </div>`;
+      } else if (this.tempBidFace == 3) {
+        dieReplace =
+          `<div class="diceSmall third-face">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>`;
+      } else if (this.tempBidFace == 4) {
+        dieReplace =
+          `<div class="diceSmall fourth-face">
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+          </div>`;
+      } else if (this.tempBidFace == 5) {
+        dieReplace =
+          `<div class="diceSmall fifth-face">
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+          </div>`;
+      } else if (this.tempBidFace == 6) {
+        dieReplace =
+        `<div class="diceSmall sixth-face">
+          <div class="column">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>
+          <div class="column">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>
+        </div>`;
+      }
+      return dieReplace;
+    },
+
+    dieFaceReplaceRoom() {
+      var dieReplace = "";
+      if (this.currentRoom.bidFace == 1) {
+        dieReplace =
+          `<div class="diceSmall first-face">
+            <span class="dotSmall">
+            </span>
+          </div>`;
+      } else if (this.currentRoom.bidFace == 2) {
+        dieReplace =
+          `<div class="diceSmall second-face">
+            <span class="dotSmall">
+            </span>
+            <span class="dotSmall">
+            </span>
+          </div>`;
+      } else if (this.currentRoom.bidFace == 3) {
+        dieReplace =
+          `<div class="diceSmall third-face">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>`;
+      } else if (this.currentRoom.bidFace == 4) {
+        dieReplace =
+          `<div class="diceSmall fourth-face">
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+          </div>`;
+      } else if (this.currentRoom.bidFace == 5) {
+        dieReplace =
+          `<div class="diceSmall fifth-face">
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+            </div>
+            <div class="column">
+              <span class="dotSmall"></span>
+              <span class="dotSmall"></span>
+            </div>
+          </div>`;
+      } else if (this.currentRoom.bidFace == 6) {
+        dieReplace =
+        `<div class="diceSmall sixth-face">
+          <div class="column">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>
+          <div class="column">
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+            <span class="dotSmall"></span>
+          </div>
+        </div>`;
+      }
+      return dieReplace;
+    },
 
   },
 
@@ -351,20 +653,14 @@ let app = new Vue({
   watch: {
     everyoneReady: function() {
       if (this.everyoneReady == true) {
-        setTimeout(() => this.gameScreen(), 3000);
-        setTimeout(() => this.goIntoGame(), 3000);
+        setTimeout(() => this.gameScreen(), 2000);
+        setTimeout(() => this.goIntoGame(), 2000);
       }
-    }
+    },
+
   },
-/*
-  playerTurn: function () {
-    if (this.currentRoom.turn == this.currentUser.player) {
-      usersRef.doc(this.id).update({
-        turn: true
-      });
-    }
-  },
-*/
+
+
 // METHODS
 
   methods: {
@@ -400,8 +696,8 @@ let app = new Vue({
           room: 0,
           dice: [],
           action: "",
-          bidFace: 0,
-          bidNumber: 0,
+          bidFace: 1,
+          bidNumber: 1,
           mood: "",
           player: 0,
           turn: false
@@ -457,14 +753,17 @@ let app = new Vue({
       if (this.allPlayers[0].id == this.id) {
         roomsRef.doc(this.currentRoomID).set({
           available: false,
+          totalTurns: 0,
           turn: 1,
+          caller: "",
           action: "",
-          bidFace: 0,
-          bidNumber: 0,
+          bidFace: 1,
+          bidNumber: 1,
         }, {merge:true});
         var orderList = [];
         for (i of this.allPlayers) {
-          newDice = []
+          var newDice = [];
+          var firstTurn = false;
           for (j = 0; j < 5; j++) {
             newDice.push(Math.floor( Math.random() * 6 ) +1);
           }
@@ -474,21 +773,44 @@ let app = new Vue({
             playerOrder = Math.floor( Math.random() * this.allPlayers.length) +1;
           }
           orderList.push(playerOrder);
-          usersRef.doc(i.id).update({ player: playerOrder });
+          if (playerOrder == 1) {
+            firstTurn = true;
+          }
+          usersRef.doc(i.id).update({ player: playerOrder }).then(usersRef.doc(i.id).update({ turn: firstTurn }));
         }
       }
     },
 
-    /* FIX LATER
-
-    selectedNumberDown() {
-      this.selectedNumber--
+    bidNumberUp() {
+      this.tempBidNumber++;
     },
 
-    selectedNumberUp() {
-      this.selectedNumber++
-    }
-    */
+    bidNumberDown() {
+      if (this.tempBidNumber > 1) {
+        this.tempBidNumber--;
+      }
+    },
+
+    bidFaceUp() {
+      if (this.tempBidFace < 6) {
+        this.tempBidFace++;
+      }
+    },
+
+    bidFaceDown() {
+      if (this.tempBidFace > 1) {
+        this.tempBidFace--;
+      }
+    },
+
+    changeMood: function(event) {
+      targetID = event.currentTarget.id;
+      usersRef.doc(this.id).update({ mood: targetID });
+    },
+
+    clearMood() {
+      usersRef.doc(this.id).update({ mood: "" });
+    },
 
   },
 

@@ -26,61 +26,8 @@
       <div v-if="screen == 'start'" class="flexPlayArea">
         <div class="title">Liar's Dice</div>
 <!--
-        <div class="otherPlayerStatusWait">
-          <div class="verticalBox">
-            <div>Mo</div>
-            <div class="moodFace">🤬</div>
-          </div>
-          <div class="otherPlayerDice">
-              <div class="diceBig" <v-for="die in waitingUsers[0].dice"></div>
-          </div>
-          <div class="verticalBox">
-            <div class="gameFont"> Bid </div>
-            <div class="horizontalBox">
-              <div v-if="waitingUsers[0].action == 'bid'" class="gameFont">{{ waitingUsers[0].bidNumber }}</div>
-              <div class="material-icons">close</div>
-              <div>
-                <div class="diceSmall third-face">
-                  <span class="dotSmall"></span>
-                  <span class="dotSmall"></span>
-                  <span class="dotSmall"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="otherPlayerStatusWait">
-          <div class="verticalBox">
-            <div>Mo</div>
-            <div class="moodFace">🤬</div>
-          </div>
-          <div class="otherPlayerDice">
-            <div class="diceBig" <v-for="die in waitingUsers[0].dice"></div>
-          </div>
-          <div class="verticalBox">
-            <div class="gameFont"> Challenge </div>
-            <div class="horizontalBox">
-              <div v-if="waitingUsers[0].action == 'bid'" class="gameFont">{{ waitingUsers[0].bidNumber }}</div>
-              <div class="material-icons">close</div>
-              <div>
-                <div class="diceSmall third-face">
-                  <span class="dotSmall"></span>
-                  <span class="dotSmall"></span>
-                  <span class="dotSmall"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="gameFont" style="margin-top: 10px;">
-          Mo bid 3 x 3.
-        </div>
-
-        <div class="playerStatusTurn">
-          <div class="verticalBox">
-            <div class="gameFont">Your Hand</div>
             <div class="horizontalBox">
 
               TO BE REPLACED WITH BIG DICE COMPONENT
@@ -236,7 +183,7 @@
           <br>
           <br>
           <div class="verticalBox">
-            <div v-for="room in rooms" class="verticalBox borderBox">
+            <div v-for="room in rooms" class="verticalBox borderBox" style="min-width: 400px">
               <div class="gameFont">Room {{ room.roomNumber }}</div>
               <waiting-room v-for="user in waitingUsers" v-bind="user" :this-room="room.roomNumber"></waiting-room>
               <button v-if="currentUser.room != room.roomNumber" @click="joinRoom(room.roomNumber)">Join this room</button>
@@ -255,9 +202,91 @@
       </div>
 
       <!-- Game Screen -->
+
       <div v-if="screen == 'game'" class="flexPlayArea">
         <div class="title">Liar's Dice</div>
-          <game-other-players v-for="otherPlayer in otherPlayers" v-bind="otherPlayer" :room-bid-face="room.bidFace" :room-bid-number="room.bidNumber"></game-other-players>
+
+        <!-- Other Players -->
+
+        <game-other-players v-for="otherPlayer in otherPlayers" v-bind="otherPlayer" :room-bid-face="currentRoom.bidFace" :room-bid-number="currentRoom.bidNumber" :room-show-dice="currentRoom.showDice"></game-other-players>
+
+        <!-- Game Status -->
+
+        <div class="gameFont" style="margin-top: 10px;">{{ turnAnnouncement }}</div>
+
+        <!-- Player Box -->
+
+        <div :class="{ playerStatusWait : !currentUser.turn , playerStatusTurn : currentUser.turn }">
+
+          <div class="verticalBox">
+            <div class="gameFont">Your Hand</div>
+            <div class="horizontalBox" v-html="dieFaceReplaceBig"></div>
+          </div>
+
+          <!-- Bid Box -->
+
+          <div class="verticalBox">
+            <div class="horizontalBox">
+              <div class="verticalBox">
+                <div class="material-icons spacer" @click="bidNumberUp()">arrow_upward</div>
+                <div class="gameFont spacer">{{ this.tempBidNumber }}</div>
+                <div class="material-icons spacer" @click="bidNumberDown()">arrow_downward</div>
+              </div>
+              <div class="material-icons spacer">close</div>
+              <div class="verticalBox">
+                <div class="material-icons spacer" @click="bidFaceUp()">arrow_upward</div>
+                <div class="spacer" style="margin-left: 15px">
+                  <span v-html="dieFaceReplace"></span>
+                </div>
+                <div class="material-icons spacer" @click="bidFaceDown()">arrow_downward</div>
+              </div>
+            </div>
+            <button v-if="currentUser.turn"  class="gameFont" @click="">Bid</button>
+            <button v-else class="gameFont disabled" class="gameFont">Bid</button>
+          </div>
+
+          <!-- Challenge Box -->
+
+          <div class="verticalBox">
+            <div class="spacer"></div>
+            <div class="horizontalBox">
+              <div class="gameFont spacer">{{ currentRoom.bidNumber }}</div>
+              <div class="material-icons spacer">close</div>
+              <div class="spacer" style="margin-left: 15px">
+                <span v-html="dieFaceReplaceRoom"></span>
+              </div>
+            </div>
+            <div class="spacer"></div>
+            <button v-if="firstTurn" class="gameFont disabled">Challenge</button>
+            <button v-else-if="currentUser.turn" class="gameFont" @click="">Challenge</button>
+            <button v-else class="gameFont disabled">Challenge</button>
+          </div>
+        </div>
+
+        <div class="moodBoard">
+          <div class="verticalBox" style="margin-top: 10px">
+            <div class="gameFont">Mood</div>
+            <div class="moodBoard">
+              <div id="😀" class="moodFace" @click="changeMood">😀</div>
+              <div id="😁" class="moodFace" @click="changeMood">😁</div>
+              <div id="😰" class="moodFace" @click="changeMood">😰</div>
+              <div id="😳" class="moodFace" @click="changeMood">😳</div>
+              <div id="😭" class="moodFace" @click="changeMood">😭</div>
+            </div>
+            <div class="moodBoard">
+              <div id="😤" class="moodFace" @click="changeMood">😤</div>
+              <div id="🤬" class="moodFace" @click="changeMood">🤬</div>
+              <div id="😇" class="moodFace" @click="changeMood">😇</div>
+              <div id="😈" class="moodFace" @click="changeMood">😈</div>
+              <div id="🖕" class="moodFace" @click="changeMood">🖕</div>
+            </div>
+          </div>
+          <div class="playerAppearance" style="margin-top: 10px">
+            <div class="gameFont">{{ currentUser.username }}</div>
+            <div v-if="currentUser.mood != ''" class="bigMoodFace" @click="clearMood">{{ currentUser.mood }}</div>
+            <div v-else><img class="playerImageBig" :src="currentUser.photoURL"></div>
+          </div>
+        </div>
 
       </div>
 
