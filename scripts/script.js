@@ -361,8 +361,6 @@ let app = new Vue({
       for (i of this.rooms) {
         if (i.roomNumber == this.currentUser.room) {
           return i;
-        } else {
-          return null;
         }
       }
     },

@@ -184,16 +184,22 @@
           <br>
           <div class="verticalBox">
             <div v-for="room in rooms" class="verticalBox borderBox" style="min-width: 400px">
-              <div class="gameFont">Room {{ room.roomNumber }}</div>
-              <waiting-room v-for="user in waitingUsers" v-bind="user" :this-room="room.roomNumber"></waiting-room>
-              <button v-if="currentUser.room != room.roomNumber" @click="joinRoom(room.roomNumber)">Join this room</button>
-              <div v-if="!currentUser.ready && currentUser.room == room.roomNumber">
-                <button type="button" @click="getReady">Ready!</button>
-                <div>Game will start when everyone clicks "ready".</div>
+              <div v-if="room.available">
+                <div class="gameFont">Room {{ room.roomNumber }}</div>
+                <waiting-room v-for="user in waitingUsers" v-bind="user" :this-room="room.roomNumber"></waiting-room>
+                <button v-if="currentUser.room != room.roomNumber" @click="joinRoom(room.roomNumber)">Join this room</button>
+                <div v-if="!currentUser.ready && currentUser.room == room.roomNumber">
+                  <button type="button" @click="getReady">Ready!</button>
+                  <div>Game will start when everyone clicks "ready".</div>
+                </div>
+                <div v-if="currentUser.room == room.roomNumber">
+                  <div v-if="everyoneReady">Everyone is ready! Enjoy your game!</div>
+                  <div v-else>Waiting for other players...</div>
+                </div>
               </div>
-              <div v-if="currentUser.room == room.roomNumber">
-                <div v-if="everyoneReady">Everyone is ready! Enjoy your game!</div>
-                <div v-else>Waiting for other players...</div>
+              <div v-else>
+                <div class="gameFont">Room {{ room.roomNumber }}</div><br>
+                <div>A game is in progress.</div>
               </div>
             </div><br>
           </div><br>
