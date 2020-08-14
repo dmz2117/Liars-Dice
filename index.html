@@ -184,7 +184,7 @@
           <br>
           <div class="verticalBox">
             <div v-for="room in rooms" class="verticalBox borderBox" style="min-width: 400px">
-              <div v-if="room.available">
+              <div v-if="room.available" class ="verticalBox">
                 <div class="gameFont">Room {{ room.roomNumber }}</div>
                 <waiting-room v-for="user in waitingUsers" v-bind="user" :this-room="room.roomNumber"></waiting-room>
                 <button v-if="currentUser.room != room.roomNumber" @click="joinRoom(room.roomNumber)">Join this room</button>
@@ -197,9 +197,9 @@
                   <div v-else>Waiting for other players...</div>
                 </div>
               </div>
-              <div v-else>
-                <div class="gameFont">Room {{ room.roomNumber }}</div><br>
-                <div>A game is in progress.</div>
+              <div v-else class ="verticalBox">
+                <div class="gameFont">Room {{ room.roomNumber }}</div>
+                <div style="margin-top: 10px">A game is in progress.</div>
               </div>
             </div><br>
           </div><br>
@@ -218,6 +218,14 @@
 
         <!-- Game Status -->
 
+        <div class="horizontalBox" :class="{hide : currentUser.action == ''}" style="margin-top: 20px;">
+          <div class="gameFont">{{ playerMoveAnnouncement }}</div>
+          <div class="gameFont spacer">{{ currentRoom.bidNumber }}</div>
+          <div class="material-icons spacer">close</div>
+          <div class="spacer" style="margin-left: 15px">
+            <span v-html="dieFaceReplaceRoom"></span>
+          </div>
+        </div>
         <div class="gameFont" style="margin-top: 10px;">{{ turnAnnouncement }}</div>
 
         <!-- Player Box -->
@@ -247,7 +255,7 @@
                 <div class="material-icons spacer" @click="bidFaceDown()">arrow_downward</div>
               </div>
             </div>
-            <button v-if="currentUser.turn"  class="gameFont" @click="">Bid</button>
+            <button v-if="currentUser.turn"  class="gameFont" @click="startBid()">Bid</button>
             <button v-else class="gameFont disabled" class="gameFont">Bid</button>
           </div>
 
@@ -268,6 +276,8 @@
             <button v-else class="gameFont disabled">Challenge</button>
           </div>
         </div>
+
+        <!-- Mood Board and Info -->
 
         <div class="moodBoard">
           <div class="verticalBox" style="margin-top: 10px">
@@ -295,6 +305,7 @@
         </div>
 
       </div>
+      <div class="error">{{ errorMessage }}</div>
 
     <!-- Finish Vue -->
     </div>

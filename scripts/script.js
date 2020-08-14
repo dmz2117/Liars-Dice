@@ -261,28 +261,6 @@ Vue.component("game-other-players", {
   }
 });
 
-Vue.component("dice-rolled", {
-  props: ["die"],
-  template: `<span class="diceAppearance"> {{ dieFaceReplace }} </span>`,
-  computed: {
-    dieFaceReplace() {
-      if (this.die == 1) {
-        return "⚀";
-      } else if (this.die == 2) {
-        return "⚁";
-      } else if (this.die == 3) {
-        return "⚂";
-      } else if (this.die == 4) {
-        return "⚃";
-      } else if (this.die == 5) {
-        return "⚄";
-      } else if (this.die == 6) {
-        return "⚅";
-      }
-    },
-  },
-});
-
 // VUE INSTANCE
 
 let app = new Vue({
@@ -297,7 +275,8 @@ let app = new Vue({
     users: [],
     rooms: [],
     tempBidNumber: 1,
-    tempBidFace: 1
+    tempBidFace: 1,
+    errorMessage: "",
   },
 
 // COMPUTED
@@ -338,6 +317,26 @@ let app = new Vue({
       if (this.screen == "waiting" && this.roomWaitingUsers.length > 1) {
         let readiness = [];
         for (user of this.roomWaitingUsers) {
+          if (user.ready) {
+            readiness.push(user)
+          }
+        }
+        if (readiness.length == this.roomWaitingUsers.length) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
+
+/*  FOR SOME REASON DIDN'T WORK IN CHROME!
+
+    everyoneReady: function () {
+      if (this.screen == "waiting" && this.roomWaitingUsers.length > 1) {
+        let readiness = [];
+        for (user of this.roomWaitingUsers) {
           readiness.push(user.ready)
         }
         return readiness.every(x => x);
@@ -345,7 +344,7 @@ let app = new Vue({
         return false;
       }
     },
-
+*/
     availableRooms: function () {
       var roomsAvail=[]
       for (i of this.rooms) {
@@ -410,6 +409,15 @@ let app = new Vue({
       return everyDie;
     },
 
+    playerMoveAnnouncement: function () {
+      var announce = "You ";
+      if (this.currentUser.action == "bid") {
+        announce += "bid "
+      } else if (this.currentUser.action == "challenged") {
+        announce += "challenged "
+      }
+    },
+
     turnAnnouncement: function () {
       if (this.currentUser.turn) {
         return "Your turn";
@@ -437,6 +445,7 @@ let app = new Vue({
     minimumBidFace: function() {
       return this.currentRoom.bidFace;
     },
+
 
     dieFaceReplaceBig() {
       var diceReplace = "";
@@ -779,6 +788,15 @@ let app = new Vue({
       }
     },
 
+    changeMood: function(event) {
+      targetID = event.currentTarget.id;
+      usersRef.doc(this.id).update({ mood: targetID });
+    },
+
+    clearMood() {
+      usersRef.doc(this.id).update({ mood: "" });
+    },
+
     bidNumberUp() {
       this.tempBidNumber++;
     },
@@ -801,13 +819,60 @@ let app = new Vue({
       }
     },
 
-    changeMood: function(event) {
-      targetID = event.currentTarget.id;
-      usersRef.doc(this.id).update({ mood: targetID });
+    startBid() {
+      if (this.firstTurn) {
+        this.makeBid();
+      } else {
+        if (this.tempBidNumber < this.currentRoom.bidNumber || this.tempBidFace < this.currentRoom.bidFace) {
+          this.errorMessage = "Your bid must be either a higher number of dice or a higher face than the previous bid.";
+        } else {
+          if (this.tempBidNumber == this.currentRoom.bidNumber && this.tempBidFace == this.currentRoom.bidFace) {
+          this.errorMessage = "Your bid must be either a higher number of dice or a higher face than the previous bid.";
+          } else {
+            this.makeBid();
+          }
+        }
+      }
     },
 
-    clearMood() {
-      usersRef.doc(this.id).update({ mood: "" });
+    makeBid() {
+      this.errorMessage = "";
+      usersRef.doc(this.id).update({
+        action: "bid",
+        bidNumber: this.tempBidNumber,
+        bidFace: this.tempBidFace,
+        turn: false
+       });
+      var nextTurn = this.currentUser.player + 1;
+      if (nextTurn > this.allPlayers.length) {
+        nextTurn = 1;
+      }
+      roomsRef.doc(this.currentRoomID).update({
+        action: "bid",
+        bidNumber: this.tempBidNumber,
+        bidFace: this.tempBidFace,
+        caller: this.currentUser.username,
+        turn: nextTurn,
+        totalTurns: this.currentRoom.totalTurns + 1
+      });
+      for (i of this.allPlayers) {
+        if (i.id != this.id) {
+          if (i.player == nextTurn) {
+            usersRef.doc(i.id).update({
+              action: "",
+              bidNumber: this.tempBidNumber,
+              bidFace: this.tempBidFace,
+              turn: true
+            });
+          } else {
+            usersRef.doc(i.id).update({
+              action: "",
+              bidNumber: this.tempBidNumber,
+              bidFace: this.tempBidFace
+            });
+          }
+        }
+      }
     },
 
   },

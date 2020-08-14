@@ -180,6 +180,10 @@ select {
   opacity: 0.5;
 }
 
+.error {
+  color: rgb(255,80,80);
+}
+
 /*
 .display {
   height: 100vh;
