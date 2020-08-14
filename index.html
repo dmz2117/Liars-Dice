@@ -37,6 +37,11 @@
           <br>
           <div>Welcome, {{ username }}!</div>
           <br>
+          <div v-if="!usernameToggleValue" @click="usernameToggle()">Change username.</div>
+          <div v-if="usernameToggleValue">
+            <input type="text" v-model="newUsername" placeholder="Enter new username">
+            <button @click="changeUsername()">Submit</button>
+          </div>
           <br>
           <div class="verticalBox">
             <div v-for="room in rooms" class="verticalBox borderBox" style="min-width: 400px">
@@ -74,7 +79,11 @@
 
         <!-- Game Status -->
 
-        <div class="horizontalBox" style="margin-top: 20px;">
+        <div v-if="currentRoom.resultsAnnouncementOne != ''" class verticalBox>
+          <div class="gameFont" style="margin-top: 20px;">{{ currentRoom.resultsAnnouncementOne }}</div>
+          <div class="gameFont" style="margin-top: 20px;">{{ currentRoom.resultsAnnouncementTwo }}</div>
+        </div>
+        <div v-else class="horizontalBox" style="margin-top: 20px;">
           <div class="gameFont">{{ playerMoveAnnouncement }}</div>
           <div class="horizontalBox" :class="{otherPlayerStatusWait : currentRoom.action == 'challenge'}">
             <div class="gameFont spacer">{{ currentRoom.bidNumber }}</div>
@@ -84,7 +93,7 @@
             </div>
           </div>
         </div>
-        <div class="gameFont" style="margin-top: 10px;">{{ turnAnnouncement }}</div>
+        <div v-if="turnAnnouncement != ''" class="gameFont" style="margin-top: 10px;">{{ turnAnnouncement }}</div>
 
         <!-- Player Box -->
 

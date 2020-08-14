@@ -72,7 +72,7 @@ Vue.component("game-other-players", {
       } else if (i == 2) {
         if (this.challengedFace == 2) {
           diceReplace +=
-            `<div class="diceBig second-face style="background-color: yellow"">
+            `<div class="diceBig second-face" style="background-color: yellow"">
               <span class="dotBig"></span>
               <span class="dotBig"></span>
             </div>`;
@@ -102,7 +102,7 @@ Vue.component("game-other-players", {
       } else if (i == 4) {
         if (this.challengedFace == 4) {
           diceReplace +=
-            `<div class="diceBig fourth-face style="background-color: yellow"">
+            `<div class="diceBig fourth-face" style="background-color: yellow"">
               <div class="column">
                 <span class="dotBig"></span>
                 <span class="dotBig"></span>
@@ -341,6 +341,8 @@ let app = new Vue({
     screen: "start",
     id: "",
     username: "",
+    newUsername: "",
+    usernameToggleValue: false,
     users: [],
     rooms: [],
     tempBidNumber: 1,
@@ -400,7 +402,7 @@ let app = new Vue({
       }
     },
 
-/*  FOR SOME REASON DIDN'T WORK IN CHROME!
+/*  FOR SOME REASON DIDN'T WORK -- UPDATE: ABOVE DOESN'T WORK EITHER, IT'S SOMETHING WITH SAFARI, MAYBE!
 
     everyoneReady: function () {
       if (this.screen == "waiting" && this.roomWaitingUsers.length > 1) {
@@ -470,10 +472,24 @@ let app = new Vue({
       return this.users.filter(i => i.room == this.currentUser.room);
     },
 
+    previousPlayer: function () {
+      var playerNumber = this.currentUser.player - 1;
+      if (playerNumber < 1) {
+        playerNumber = this.allPlayers.length;
+      }
+      for (i of this.otherPlayers) {
+        if (playerNumber == i.player) {
+          return i;
+        }
+      }
+    },
+
     allDice: function () {
       var everyDie = [];
       for (i of this.allPlayers) {
-        everyDie.concat(i.dice);
+        for (j of i.dice) {
+          everyDie.push(j);
+        }
       }
       return everyDie;
     },
@@ -511,6 +527,7 @@ let app = new Vue({
           }
         }
       }
+      return "";
     },
 
     firstTurn: function() {
@@ -549,7 +566,7 @@ let app = new Vue({
         } else if (i == 2) {
           if (this.challengedFace == 2) {
             diceReplace +=
-              `<div class="diceBig second-face style="background-color: yellow"">
+              `<div class="diceBig second-face" style="background-color: yellow"">
                 <span class="dotBig"></span>
                 <span class="dotBig"></span>
               </div>`;
@@ -579,7 +596,7 @@ let app = new Vue({
         } else if (i == 4) {
           if (this.challengedFace == 4) {
             diceReplace +=
-              `<div class="diceBig fourth-face style="background-color: yellow"">
+              `<div class="diceBig fourth-face" style="background-color: yellow"">
                 <div class="column">
                   <span class="dotBig"></span>
                   <span class="dotBig"></span>
@@ -859,13 +876,26 @@ let app = new Vue({
           bidNumber: 1,
           mood: "",
           player: 0,
-          turn: false
+          turn: false,
+          out: false,
         })
         .then(this.waitingScreen());
       });
     },
 
     // Waiting Room
+
+    usernameToggle() {
+      this.usernameToggleValue = !this.usernameToggleValue;
+    },
+
+    changeUsername() {
+      if (this.newUsername != "") {
+        this.usernameToggleValue = false;
+        this.username = this.newUsername;
+        usersRef.doc(this.id).update({ username: this.newUsername });
+      }
+    },
 
     makeNewRoom() {
       roomsRef.doc(this.nextRoomID).set({
@@ -919,7 +949,10 @@ let app = new Vue({
           bidFace: 1,
           bidNumber: 1,
           roomNumber: this.currentUser.room,
-          showDice: false
+          showDice: false,
+          resultsAnnouncementOne: "",
+          resultsAnnouncementTwo: "",
+          challengeResult: ""
         });
         var orderList = [];
         for (i of this.allPlayers) {
@@ -1046,13 +1079,165 @@ let app = new Vue({
            action: ""
          });
        }
-       setTimeout(() => this.challengeReveal(), 2000);
+       setTimeout(() => this.challengeReveal(), 3000);
     },
 
     challengeReveal() {
+      var countResult = 0;
+      var challengePassOrFail = "";
+      for (i of this.allDice) {
+        if (i == this.currentRoom.bidFace) {
+          countResult++
+        }
+      }
+      if (countResult >= this.currentRoom.bidNumber) {
+        challengePassOrFail = "fail";
+      } else {
+        challengePassOrFail = "pass";
+      }
+      if (this.currentRoom.bidFace == 1) {
+        var faceName = "one";
+      } else if (this.currentRoom.bidFace == 2) {
+        var faceName = "two";
+      } else if (this.currentRoom.bidFace == 3) {
+        var faceName = "three";
+      } else if (this.currentRoom.bidFace == 4) {
+        var faceName = "four";
+      } else if (this.currentRoom.bidFace == 5) {
+        var faceName = "five";
+      } else if (this.currentRoom.bidFace == 6) {
+        var faceName = "six";
+      }
+      if (countResult == 1) {
+        var countAnnouncement = "There is 1 " + faceName + ".";
+      } else {
+        if (this.currentRoom.bidFace == 6) {
+          var countAnnouncement = "There are " + String(countResult) + " sixes.";
+        } else {
+          var countAnnouncement = "There are " + String(countResult) + " " + faceName + "s.";
+        }
+      }
       roomsRef.doc(this.currentRoomID).update({
-        showDice: true
-      });
+        showDice: true,
+        resultsAnnouncementOne: countAnnouncement,
+        challengeResult: challengePassOrFail,
+      }).then(this.roundWinnerRevealWait());
+    },
+
+    roundWinnerRevealWait() {
+      setTimeout(() => this.roundWinnerReveal(), 3000);
+    },
+
+    roundWinnerReveal() {
+      var winnerResultOne = "";
+      var winnerResultTwo
+      if (this.currentRoom.challengeResult == "fail") {
+        winnerResultOne = this.previousPlayer.username + " wasn't lying!";
+        winnerResultTwo = this.currentUser.username + " loses a die."
+        roomsRef.doc(this.currentRoomID).update({
+          resultsAnnouncementOne: winnerResultOne,
+          resultsAnnouncementTwo: winnerResultTwo,
+        }).then(this.nextRoundWait());
+      } else if (this.currentRoom.challengeResult == "pass") {
+        winnerResultOne = this.currentUser.username + " was right! " + this.previousPlayer.username + " is a liar!";
+        winnerResultTwo = this.previousPlayer.username + " loses a die."
+        roomsRef.doc(this.currentRoomID).update({
+          resultsAnnouncementOne: winnerResultOne,
+          resultsAnnouncementTwo: winnerResultTwo,
+        }).then(this.nextRoundWait());
+      }
+    },
+
+    nextRoundWait() {
+      setTimeout(() => this.nextRoundResetDice(), 3000);
+    },
+
+    nextRoundResetDice() {
+      roomsRef.doc(this.currentRoomID).update({ showDice: false }).then(this.nextRound());
+    },
+
+    nextRound() {
+      if (this.currentRoom.challengeResult == "fail") {
+        var playerNewDiceLength = this.currentUser.dice.length - 1;
+        if (playerNewDiceLength == 0) {
+          usersRef.doc(this.currentUser.id).update({
+            action: "",
+            dice: [],
+            out: true,
+          });
+        } else {
+          var playerNewDice = [];
+          for (i = 0; i < playerNewDiceLength; i++) {
+            playerNewDice.push(Math.floor( Math.random() * 6 ) +1);
+          }
+          usersRef.doc(this.currentUser.id).update({
+            action: "",
+            dice: playerNewDice,
+            turn: true,
+          });
+        }
+        for (i of this.allPlayers) {
+          if (i.id != this.currentUser.id && !i.out) {
+            var newDice = [];
+            for (j = 0; j < i.dice.length; j++) {
+              newDice.push(Math.floor( Math.random() * 6 ) +1);
+            }
+            usersRef.doc(i.id).update({ dice: newDice });
+          }
+        }
+        roomsRef.doc(this.currentRoomID).update({
+          totalTurns: 0,
+          turn: this.currentUser.player,
+          caller: "",
+          action: "",
+          bidFace: 1,
+          bidNumber: 1,
+          showDice: false,
+          resultsAnnouncementOne: "",
+          resultsAnnouncementTwo: "",
+          challengeResult: ""
+        });
+      } else if (this.currentRoom.challengeResult == "pass") {
+        var loserNewDiceLength = this.previousPlayer.dice.length - 1;
+        if (loserNewDiceLength == 0) {
+          usersRef.doc(this.previousPlayer.id).update({
+            action: "",
+            dice: [],
+            out: true,
+          });
+        } else {
+          var loserNewDice = [];
+          for (i = 0; i < loserNewDiceLength; i++) {
+            loserNewDice.push(Math.floor( Math.random() * 6 ) +1);
+          }
+          usersRef.doc(this.previousPlayer.id).update({
+            action: "",
+            dice: loserNewDice,
+            turn: true,
+          });
+        }
+        for (i of this.allPlayers) {
+          if (i.id != this.previousPlayer.id && !i.out) {
+            var newDice = [];
+            for (j = 0; j < i.dice.length; j++) {
+              newDice.push(Math.floor( Math.random() * 6 ) +1);
+            }
+            usersRef.doc(i.id).update({ dice: newDice });
+          }
+        }
+        roomsRef.doc(this.currentRoomID).update({
+          totalTurns: 0,
+          turn: this.previousPlayer.player,
+          caller: "",
+          action: "",
+          bidFace: 1,
+          bidNumber: 1,
+          showDice: false,
+          resultsAnnouncementOne: "",
+          resultsAnnouncementTwo: "",
+          challengeResult: ""
+        });
+      }
     },
 
   },
