@@ -28,7 +28,7 @@ Vue.component("waiting-room", {
 });
 
 Vue.component("game-other-players", {
-  props: ["username", "mood", "dice", "action", "bidNumber", "bidFace", "turn", "photoURL", "roomBidFace", "roomBidNumber", "roomShowDice"],
+  props: ["username", "mood", "dice", "action", "bidNumber", "bidFace", "turn", "photoURL", "roomBidFace", "roomBidNumber", "roomShowDice", "challengedFace"],
 
   template: ` <div :class="{ otherPlayerStatusWait : !turn , otherPlayerStatusTurn : turn }">
                 <div class="verticalBox">
@@ -57,67 +57,136 @@ Vue.component("game-other-players", {
     var diceReplace = "";
     for (i of this.dice) {
       if (i == 1) {
-        diceReplace +=
-          `<div class="diceBig first-face">
-            <span class="dotBig">
-            </span>
-          </div>`;
+        if (this.challengedFace == 1) {
+          diceReplace +=
+            `<div class="diceBig first-face" style="background-color: yellow">
+              <span class="dotBig">
+              </span>
+            </div>`;
+        } else {
+          diceReplace +=
+            `<div class="diceBig first-face">
+              <span class="dotBig"></span>
+            </div>`;
+        }
       } else if (i == 2) {
-        diceReplace +=
-          `<div class="diceBig second-face">
-            <span class="dotBig">
-            </span>
-            <span class="dotBig">
-            </span>
-          </div>`;
+        if (this.challengedFace == 2) {
+          diceReplace +=
+            `<div class="diceBig second-face style="background-color: yellow"">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>`;
+        } else {
+          diceReplace +=
+            `<div class="diceBig second-face">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>`;
+        }
       } else if (i == 3) {
-        diceReplace +=
-          `<div class="diceBig third-face">
-            <span class="dotBig"></span>
-            <span class="dotBig"></span>
-            <span class="dotBig"></span>
-          </div>`;
+        if (this.challengedFace == 3) {
+          diceReplace +=
+            `<div class="diceBig third-face" style="background-color: yellow">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>`;
+        } else {
+          diceReplace +=
+            `<div class="diceBig third-face">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>`;
+        }
       } else if (i == 4) {
-        diceReplace +=
-          `<div class="diceBig fourth-face">
-            <div class="column">
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-            </div>
-            <div class="column">
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-            </div>
-          </div>`;
+        if (this.challengedFace == 4) {
+          diceReplace +=
+            `<div class="diceBig fourth-face style="background-color: yellow"">
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+            </div>`;
+        } else {
+          diceReplace +=
+            `<div class="diceBig fourth-face">
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+            </div>`;
+        }
       } else if (i == 5) {
-        diceReplace +=
-          `<div class="diceBig fifth-face">
+        if (this.challengedFace == 5) {
+          diceReplace +=
+            `<div class="diceBig fifth-face" style="background-color: yellow">
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+            </div>`;
+        } else {
+          diceReplace +=
+            `<div class="diceBig fifth-face">
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+            </div>`;
+        }
+      } else if (i == 6) {
+        if (this.challengedFace == 6) {
+          diceReplace +=
+          `<div class="diceBig sixth-face" style="background-color: yellow">
             <div class="column">
+              <span class="dotBig"></span>
               <span class="dotBig"></span>
               <span class="dotBig"></span>
             </div>
             <div class="column">
               <span class="dotBig"></span>
-            </div>
-            <div class="column">
               <span class="dotBig"></span>
               <span class="dotBig"></span>
             </div>
           </div>`;
-      } else if (i == 6) {
-        diceReplace +=
-        `<div class="diceBig sixth-face">
-          <div class="column">
-            <span class="dotBig"></span>
-            <span class="dotBig"></span>
-            <span class="dotBig"></span>
-          </div>
-          <div class="column">
-            <span class="dotBig"></span>
-            <span class="dotBig"></span>
-            <span class="dotBig"></span>
-          </div>
-        </div>`;
+        } else {
+          diceReplace +=
+          `<div class="diceBig sixth-face">
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+            <div class="column">
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+              <span class="dotBig"></span>
+            </div>
+          </div>`;
+        }
       }
     }
     return diceReplace;
@@ -410,12 +479,26 @@ let app = new Vue({
     },
 
     playerMoveAnnouncement: function () {
-      var announce = "You ";
-      if (this.currentUser.action == "bid") {
+      var announce = this.currentRoom.caller + " ";
+      if (this.currentRoom.action == "bid") {
         announce += "bid "
-      } else if (this.currentUser.action == "challenged") {
-        announce += "challenged "
+      } else if (this.currentRoom.action == "challenge") {
+        var liar = Math.floor( Math.random() * 6 ) +1;
+        if (liar == 1) {
+          announce += "calls bullshit."
+        } else if (liar == 2) {
+          announce += "finds that hard to believe."
+        } else if (liar == 3) {
+          announce += "thinks that's a crock."
+        } else if (liar == 4) {
+          announce += "isn't buying it."
+        } else if (liar == 5) {
+          announce += "wants proof."
+        } else if (liar == 6) {
+          announce = "It's " + this.currentRoom.caller + ", bitch."
+        }
       }
+      return announce;
     },
 
     turnAnnouncement: function () {
@@ -438,12 +521,12 @@ let app = new Vue({
       }
     },
 
-    minimumBidNumber: function() {
-      return this.currentRoom.bidNumber + 1;
-    },
-
-    minimumBidFace: function() {
-      return this.currentRoom.bidFace;
+    challengedFace: function() {
+      if (this.currentRoom.action == "challenge" && this.currentRoom.showDice) {
+        return this.currentRoom.bidFace;
+      } else {
+        return 0;
+      }
     },
 
 
@@ -451,67 +534,136 @@ let app = new Vue({
       var diceReplace = "";
       for (i of this.currentUser.dice) {
         if (i == 1) {
-          diceReplace +=
-            `<div class="diceBig first-face">
-              <span class="dotBig">
-              </span>
-            </div>`;
+          if (this.challengedFace == 1) {
+            diceReplace +=
+              `<div class="diceBig first-face" style="background-color: yellow">
+                <span class="dotBig">
+                </span>
+              </div>`;
+          } else {
+            diceReplace +=
+              `<div class="diceBig first-face">
+                <span class="dotBig"></span>
+              </div>`;
+          }
         } else if (i == 2) {
-          diceReplace +=
-            `<div class="diceBig second-face">
-              <span class="dotBig">
-              </span>
-              <span class="dotBig">
-              </span>
-            </div>`;
+          if (this.challengedFace == 2) {
+            diceReplace +=
+              `<div class="diceBig second-face style="background-color: yellow"">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>`;
+          } else {
+            diceReplace +=
+              `<div class="diceBig second-face">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>`;
+          }
         } else if (i == 3) {
-          diceReplace +=
-            `<div class="diceBig third-face">
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-            </div>`;
+          if (this.challengedFace == 3) {
+            diceReplace +=
+              `<div class="diceBig third-face" style="background-color: yellow">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>`;
+          } else {
+            diceReplace +=
+              `<div class="diceBig third-face">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>`;
+          }
         } else if (i == 4) {
-          diceReplace +=
-            `<div class="diceBig fourth-face">
-              <div class="column">
-                <span class="dotBig"></span>
-                <span class="dotBig"></span>
-              </div>
-              <div class="column">
-                <span class="dotBig"></span>
-                <span class="dotBig"></span>
-              </div>
-            </div>`;
+          if (this.challengedFace == 4) {
+            diceReplace +=
+              `<div class="diceBig fourth-face style="background-color: yellow"">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>`;
+          } else {
+            diceReplace +=
+              `<div class="diceBig fourth-face">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>`;
+          }
         } else if (i == 5) {
-          diceReplace +=
-            `<div class="diceBig fifth-face">
+          if (this.challengedFace == 5) {
+            diceReplace +=
+              `<div class="diceBig fifth-face" style="background-color: yellow">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>`;
+          } else {
+            diceReplace +=
+              `<div class="diceBig fifth-face">
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                </div>
+                <div class="column">
+                  <span class="dotBig"></span>
+                  <span class="dotBig"></span>
+                </div>
+              </div>`;
+          }
+        } else if (i == 6) {
+          if (this.challengedFace == 6) {
+            diceReplace +=
+            `<div class="diceBig sixth-face" style="background-color: yellow">
               <div class="column">
+                <span class="dotBig"></span>
                 <span class="dotBig"></span>
                 <span class="dotBig"></span>
               </div>
               <div class="column">
                 <span class="dotBig"></span>
-              </div>
-              <div class="column">
                 <span class="dotBig"></span>
                 <span class="dotBig"></span>
               </div>
             </div>`;
-        } else if (i == 6) {
-          diceReplace +=
-          `<div class="diceBig sixth-face">
-            <div class="column">
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-            </div>
-            <div class="column">
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-              <span class="dotBig"></span>
-            </div>
-          </div>`;
+          } else {
+            diceReplace +=
+            `<div class="diceBig sixth-face">
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+              <div class="column">
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+                <span class="dotBig"></span>
+              </div>
+            </div>`;
+          }
         }
       }
       return diceReplace;
@@ -708,7 +860,7 @@ let app = new Vue({
           mood: "",
           player: 0,
           turn: false
-        }, {merge:true})
+        })
         .then(this.waitingScreen());
       });
     },
@@ -766,7 +918,9 @@ let app = new Vue({
           action: "",
           bidFace: 1,
           bidNumber: 1,
-        }, {merge:true});
+          roomNumber: this.currentUser.room,
+          showDice: false
+        });
         var orderList = [];
         for (i of this.allPlayers) {
           var newDice = [];
@@ -873,6 +1027,32 @@ let app = new Vue({
           }
         }
       }
+    },
+
+    makeChallenge() {
+      usersRef.doc(this.id).update({
+        action: "challenge",
+        bidNumber: this.currentRoom.bidNumber,
+        bidFace: this.currentRoom.bidFace,
+        turn: false
+       });
+       roomsRef.doc(this.currentRoomID).update({
+         action: "challenge",
+         caller: this.currentUser.username,
+         totalTurns: 0
+       });
+       for (i of this.allPlayers) {
+         usersRef.doc(i.id).update({
+           action: ""
+         });
+       }
+       setTimeout(() => this.challengeReveal(), 2000);
+    },
+
+    challengeReveal() {
+      roomsRef.doc(this.currentRoomID).update({
+        showDice: true
+      });
     },
 
   },
