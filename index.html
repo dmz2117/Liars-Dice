@@ -26,7 +26,9 @@
 
       <div v-if="screen == 'start'" class="flexPlayArea">
         <div class="title">Liar's Dice</div>
-        <button type="button" name="button" @click="logInGoogle">LOG IN</button>
+        <button type="button" name="button" @click="logInGoogle()">LOG IN</button>
+        <button type="button" name="button" @click="clearRooms()">Clear Rooms</button>
+        <div v-if="reset">Room and users reset.</div>
       </div>
 
       <!-- Waiting Room Screen -->
@@ -85,7 +87,7 @@
         </div>
         <div v-else class="horizontalBox" style="margin-top: 20px;">
           <div class="gameFont">{{ playerMoveAnnouncement }}</div>
-          <div class="horizontalBox" :class="{otherPlayerStatusWait : currentRoom.action == 'challenge'}">
+          <div class="horizontalBox" :class="{ otherPlayerStatusWait : currentRoom.action == 'challenge' }">
             <div class="gameFont spacer">{{ currentRoom.bidNumber }}</div>
             <div class="material-icons spacer">close</div>
             <div class="spacer" style="margin-left: 15px">
@@ -100,7 +102,8 @@
         <div :class="{ playerStatusWait : !currentUser.turn , playerStatusTurn : currentUser.turn }">
 
           <div class="verticalBox">
-            <div class="gameFont">Your Hand</div>
+            <div v-if="currentUser.out" class="gameFont">You're out.<br>Just hang out for a bit.</div>
+            <div v-else class="gameFont">Your Hand</div>
             <div class="horizontalBox" v-html="dieFaceReplaceBig"></div>
           </div>
 
@@ -110,8 +113,8 @@
             <div class="horizontalBox">
               <div class="verticalBox">
                 <div class="material-icons spacer" @click="bidNumberUp()">arrow_upward</div>
-                <div class="gameFont spacer">{{ this.tempBidNumber }}</div>
-                <div class="material-icons spacer" @click="bidNumberDown()">arrow_downward</div>
+                <div class="gameFont spacer">{{ tempBidNumber }}</div>
+                <div class="material-icons spacer" :class="{ hide : tempBidNumber == minimumBidNumber }" @click="bidNumberDown()">arrow_downward</div>
               </div>
               <div class="material-icons spacer">close</div>
               <div class="verticalBox">
@@ -119,7 +122,7 @@
                 <div class="spacer" style="margin-left: 15px">
                   <span v-html="dieFaceReplace"></span>
                 </div>
-                <div class="material-icons spacer" @click="bidFaceDown()">arrow_downward</div>
+                <div class="material-icons spacer" :class="{ hide : tempBidFace == minimumBidFace }" @click="bidFaceDown()">arrow_downward</div>
               </div>
             </div>
             <button v-if="currentUser.turn"  class="gameFont" @click="startBid()">Bid</button>
@@ -170,9 +173,30 @@
             <div v-else><img class="playerImageBig" :src="currentUser.photoURL"></div>
           </div>
         </div>
-
       </div>
       <div class="error">{{ errorMessage }}</div>
+
+      <!-- Winner Screen -->
+
+      <div v-if="screen == 'winScreen'" class="flexPlayArea">
+        <div>
+          <h1 class="title">Liar's Dice</h1>
+          <br>
+          <br>
+          <div class="verticalBox borderBox" style="min-width: 400px">
+            <div class="verticalBox">
+              <div class="bigMoodFace">👑</div>
+              <div v-if="finalWinner.mood != ''" class="bigMoodFace">{{ finalWinner.mood }}</div>
+              <div v-else><img class="playerImageBig" :src="finalWinner.photoURL"></div>
+              <div class="gameFont">{{ finalWinner.username }}</div>
+              <div class="gameFont">wins!</div>
+            </div>
+          </div>
+          <br>
+          <br>
+          <button @click="backToWaitingRoom()">Go back to the waiting room</button>
+        </div>
+      </div>
 
     <!-- Finish Vue -->
     </div>
